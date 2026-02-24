@@ -1,4 +1,4 @@
-export default function Home() {
+export default function AppHome() {
   return (
     <div>
       <h1>Zimna AI</h1>
