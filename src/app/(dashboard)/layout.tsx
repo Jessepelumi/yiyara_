@@ -17,15 +17,22 @@ export default function DashboardLayout({
     <section className="flex h-dvh">
       <Sidebar />
       <MobileSidebar isOpen={isMobileSidebarOpen} onClose={onClose} />
-      <section className="w-full">
-        <aside>
-          <Button
-            variant="ghost"
-            onClick={() => setIsMobileSidebarOpen(!isMobileSidebarOpen)}
-          >
-            <ListIcon size={20} />
-          </Button>
+      <section className="flex flex-col w-full">
+        <header className="flex justify-between px-3 py-5">
+          <div className="flex items-center">
+            <Button
+              variant="ghost"
+              onClick={() => setIsMobileSidebarOpen(!isMobileSidebarOpen)}
+              className="block lg:hidden"
+            >
+              <ListIcon size={20} />
+            </Button>
+            <h1>Zimna</h1>
+          </div>
 
+          <div>User</div>
+        </header>
+        <aside className="flex h-full overflow-hidden px-3 pt-3">
           {children}
         </aside>
       </section>
