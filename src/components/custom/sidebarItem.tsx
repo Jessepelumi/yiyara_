@@ -18,14 +18,14 @@ export const SidebarItem = ({ icon: Icon, text, href }: SidebarItemProps) => {
   return (
     <Link href={href}>
       <div
-        className={`flex items-center gap-3 rounded-lg p-2 ${isActive ? "bg-blue-200 text-white" : "hover:bg-blue-200 group hover:text-white"}`}
+        className={`flex items-center gap-2 rounded-lg px-2 py-1.5 ${isActive ? "bg-blue-100 " : "hover:bg-blue-50"}`}
       >
         <Icon
           size={20}
-          className={`${isActive ? "text-white" : "text-gray-500 group-hover:text-white"}`}
+          className={`${isActive ? "text-gray-700" : "text-gray-500"}`}
         />
         <p
-          className={`text-mm ${isActive ? "text-white" : "text-gray-500 group-hover:text-white]:"}`}
+          className={`text-sm ${isActive ? "text-gray-700" : "text-gray-500"}`}
         >
           {text}
         </p>
