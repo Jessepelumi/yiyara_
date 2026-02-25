@@ -85,7 +85,7 @@ export const MobileSidebar = ({ isOpen, onClose }: MobileSidebarProps) => {
   return (
     <section
       ref={sidebarRef}
-      className={`block z-10 fixed bg-white border-r px-3.5 py-7 h-dvh w-3/5 max-w-xs lg:hidden ${
+      className={`block z-10 fixed bg-white border-r px-3.5 py-5 h-dvh w-3/5 max-w-xs lg:hidden ${
         isOpen ? "translate-x-0" : "-translate-x-full"
       } transform transition-transform duration-300`}
     >
