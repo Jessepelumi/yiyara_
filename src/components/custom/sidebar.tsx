@@ -25,6 +25,7 @@ export const Sidebar = () => {
 
         <nav className="flex flex-col gap-3">
           <SidebarItem icon={SparkleIcon} text="New Prompt" href="/home" />
+          <SidebarItem icon={SparkleIcon} text="Goals & Tasks" href="/goals" />
           <SidebarItem icon={TargetIcon} text="Objectives" href="/objectives" />
           <SidebarItem icon={NetworkIcon} text="Goal Connections" href="" />
         </nav>
@@ -100,7 +101,16 @@ export const MobileSidebar = ({ isOpen, onClose }: MobileSidebarProps) => {
 
           <nav className="flex flex-col gap-3">
             <SidebarItem icon={SparkleIcon} text="New Prompt" href="/home" />
-            <SidebarItem icon={TargetIcon} text="Objectives" href="/objectives" />
+            <SidebarItem
+              icon={SparkleIcon}
+              text="Goals & Tasks"
+              href="/goals"
+            />
+            <SidebarItem
+              icon={TargetIcon}
+              text="Objectives"
+              href="/objectives"
+            />
             <SidebarItem icon={NetworkIcon} text="Goal Connections" href="" />
           </nav>
         </div>
