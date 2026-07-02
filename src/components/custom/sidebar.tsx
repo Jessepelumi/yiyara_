@@ -11,13 +11,16 @@ import {
   //TargetIcon,
   TerminalWindowIcon,
 } from "@phosphor-icons/react/dist/ssr";
-import { LogOut, SidebarItem, SidebarItemVariant } from "./sidebarItem";
+import { LogIn, LogOut, SidebarItem, SidebarItemVariant } from "./sidebarItem";
 import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { useSession, signIn } from "next-auth/react";
 
 export const Sidebar = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const { status } = useSession();
+  const isAuthenticated = status === "authenticated";
 
   return (
     <section
@@ -50,18 +53,24 @@ export const Sidebar = () => {
             href="/home"
             isCollapsed={isCollapsed}
           />
-          <SidebarItem
-            icon={TerminalWindowIcon}
-            text="Console"
-            href="/console"
-            isCollapsed={isCollapsed}
-          />
-          <SidebarItem
-            icon={CheckSquareOffsetIcon}
-            text="Goals & Tasks"
-            href="/goals"
-            isCollapsed={isCollapsed}
-          />
+
+          {isAuthenticated && (
+            <>
+              <SidebarItem
+                icon={TerminalWindowIcon}
+                text="Console"
+                href="/console"
+                isCollapsed={isCollapsed}
+              />
+              <SidebarItem
+                icon={CheckSquareOffsetIcon}
+                text="Goals & Tasks"
+                href="/goals"
+                isCollapsed={isCollapsed}
+              />
+            </>
+          )}
+
           {/* <SidebarItem icon={TargetIcon} text="Objectives" href="/objectives" />
           <SidebarItem icon={NetworkIcon} text="Goal Connections" href="" /> */}
         </nav>
@@ -75,6 +84,7 @@ export const Sidebar = () => {
             href="/settings"
             isCollapsed={isCollapsed}
           />
+
           <SidebarItemVariant
             icon={QuestionIcon}
             text="Help & Support"
@@ -83,12 +93,15 @@ export const Sidebar = () => {
           />
         </nav>
 
-        <LogOut isCollapsed={isCollapsed} />
+        {!isAuthenticated && (
+          <LogIn isCollapsed={isCollapsed} />
+        )}
       </div>
     </section>
   );
 };
 
+// Sidebar for mobile view
 interface MobileSidebarProps {
   isOpen: boolean;
   onClose: () => void;
