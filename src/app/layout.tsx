@@ -3,6 +3,7 @@ import { Sen } from "next/font/google";
 import "./globals.css";
 import QueryProvider from "@/components/providers/QueryProvider";
 import NextAuthProvider from "@/components/providers/NextAuthProvider";
+import { MainLayoutWrapper } from "./MainLayoutWrapper";
 
 const sen = Sen({
   weight: "400",
@@ -26,7 +27,9 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${sen.className} antialiased`}>
         <NextAuthProvider>
-          <QueryProvider>{children}</QueryProvider>
+          <QueryProvider>
+            <MainLayoutWrapper>{children}</MainLayoutWrapper>
+          </QueryProvider>
         </NextAuthProvider>
       </body>
     </html>
