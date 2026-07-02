@@ -1,7 +1,7 @@
 "use client";
 
 import { IconProps } from "@phosphor-icons/react";
-import { SignOutIcon } from "@phosphor-icons/react/dist/ssr";
+import { SignInIcon, SignOutIcon } from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React from "react";
@@ -96,6 +96,32 @@ export const LogOut = ({ isCollapsed }: LogOutProps) => {
       >
         <SignOutIcon size={20} />
         {isCollapsed ? "" : "Log out"}
+      </div>
+    </button>
+  );
+};
+
+interface LogInProps {
+  isCollapsed?: boolean,
+}
+
+export const LogIn = ({ isCollapsed }: LogInProps) => {
+  // const handleLogout = async () => {
+  //   // This clears the NextAuth cookie and the Django session/JWT
+  //   // from the browser's memory.
+  //   await signOut({
+  //     callbackUrl: "/",
+  //     redirect: true,
+  //   });
+  // };
+
+  return (
+    <button onClick={()=>{}} className="p-0">
+      <div
+        className={`flex items-center ${isCollapsed ? "gap-0" : "gap-2"} rounded-md px-2 py-1.5 text-sm text-blue-400 bg-blue-100 hover:text-blue-500 hover:bg-blue-200`}
+      >
+        <SignInIcon size={20} />
+        {isCollapsed ? "" : "Log In"}
       </div>
     </button>
   );
