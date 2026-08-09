@@ -27,6 +27,7 @@ export const useChat = (goalId?: string) => {
 
       // Invalidate existing goals list in case the AI added new goals/tasks
       queryClient.invalidateQueries({ queryKey: ["messages", goalId] });
+      queryClient.invalidateQueries({ queryKey: ["goals"] });
     },
   });
 

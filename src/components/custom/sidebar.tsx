@@ -15,7 +15,7 @@ import { LogIn, LogOut, SidebarItem, SidebarItemVariant } from "./sidebarItem";
 import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { useSession, signIn } from "next-auth/react";
+import { useSession } from "next-auth/react";
 
 export const Sidebar = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);

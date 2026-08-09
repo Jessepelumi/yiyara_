@@ -5,7 +5,7 @@ import { examplePrompts } from "@/static/examplePrompts";
 import { ExamplePromptCard } from "@/components/custom/examplePrompt";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { goalsApi } from "@/lib/api/goals";
 import { Goal } from "@/lib/api/types";
 import { PromptField } from "@/components/custom/promptField";
@@ -13,15 +13,16 @@ import { useRouter } from "next/navigation";
 
 export default function Home() {
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   const [showExamples, setShowExamples] = useState(false);
   const [inputValue, setInputValue] = useState("");
 
   const mutation = useMutation({
     mutationFn: (text: string) => goalsApi.decompose(text),
-    onSuccess: (data: Goal[]) => {
-      console.log("Goal created!", data);
+    onSuccess: async (data: Goal[]) => {
       setInputValue("");
+      await queryClient.invalidateQueries({ queryKey: ["goals"] });
 
       if (data && data.length > 0) {
         const primaryGoalId = data[0].id;

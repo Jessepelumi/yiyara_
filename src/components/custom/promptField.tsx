@@ -16,6 +16,7 @@ interface PromptFieldProps {
 export const PromptField = ({
   value,
   isPending,
+  disabled,
   onChange,
   onSubmit,
 }: PromptFieldProps) => {
@@ -34,7 +35,7 @@ export const PromptField = ({
           value={value}
           onChange={onChange}
           onKeyDown={handleKeyDown}
-          disabled={isPending}
+          disabled={disabled || isPending}
           placeholder={
             isPending ? "Zimna is decomposing..." : "Ask whatever you want..."
           }
@@ -55,7 +56,7 @@ export const PromptField = ({
           <div>
             <button
               onClick={onSubmit}
-              disabled={isPending || !value.trim()}
+              disabled={disabled || isPending || !value.trim()}
               className="p-2 rounded-lg text-blue-600 bg-linear-to-r from-blue-200 via-blue-200 via-20% to-purple-300 hover:text-blue-700"
             >
               <ArrowRightIcon size={18} />
