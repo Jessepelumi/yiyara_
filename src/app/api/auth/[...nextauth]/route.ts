@@ -1,6 +1,8 @@
 import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 
+const BACKEND_URL = process.env.BACKEND_URL ?? process.env.BASE_URL;
+
 const handler = NextAuth({
   providers: [
     GoogleProvider({
@@ -12,11 +14,12 @@ const handler = NextAuth({
     // This runs when Google sends the user back to us
     async signIn({ user }) {
       if (!user.email) return false;
+      if (!BACKEND_URL || !process.env.INTERNAL_AUTH_SECRET) return false;
 
       try {
         // CALL THE DJANGO BRIDGE
         const response = await fetch(
-          `${process.env.BASE_URL}/users/auth/bridge/`,
+          `${BACKEND_URL.replace(/\/+$/, "")}/users/auth/bridge/`,
           {
             method: "POST",
             headers: {

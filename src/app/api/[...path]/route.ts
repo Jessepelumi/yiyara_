@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const BACKEND_URL = process.env.BASE_URL;
+const BACKEND_URL = process.env.BACKEND_URL ?? process.env.BASE_URL;
 
 async function proxyHandler(
   req: NextRequest,
@@ -17,7 +17,13 @@ async function proxyHandler(
   // Construct the backend URL
   // Ensure we add a trailing slash for Django compatibility
   const relativePath = pathSegments.filter(Boolean).join("/");
-  const url = `${BACKEND_URL}/${relativePath}/`;
+  if (!BACKEND_URL) {
+    return NextResponse.json(
+      { error: "Backend URL is not configured" },
+      { status: 500 },
+    );
+  }
+  const url = `${BACKEND_URL.replace(/\/+$/, "")}/${relativePath}/`;
 
   // Prepare headers (Forward the JWT)
   const authHeader = req.headers.get("authorization");
