@@ -9,8 +9,9 @@ export default withAuth({
 // List every route that requires a login
 export const config = {
   matcher: [
-    "/home/:path*", 
-    "/goals/:path*", 
-    "/objectives/:path*"
+    "/home/:path*",
+    "/goals/:path*",
+    "/console/:path*",
+    "/objectives/:path*",
   ],
 };
