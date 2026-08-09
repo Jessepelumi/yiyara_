@@ -36,7 +36,7 @@ export const Sidebar = () => {
             <SidebarSimpleIcon size={20} />
           </Button>
 
-          {!isCollapsed && (
+          {isAuthenticated && !isCollapsed && (
             <Button
               variant="link"
               className="text-gray-500 hover:text-blue-700"
@@ -77,25 +77,28 @@ export const Sidebar = () => {
       </div>
 
       <div className="flex flex-col gap-3">
-        <nav className="flex flex-col gap-3">
-          <SidebarItemVariant
-            icon={GearIcon}
-            text="Settings"
-            href="/settings"
-            isCollapsed={isCollapsed}
-          />
+        {isAuthenticated && (
+          <>
+            <nav className="flex flex-col gap-3">
+              <SidebarItemVariant
+                icon={GearIcon}
+                text="Settings"
+                href="/settings"
+                isCollapsed={isCollapsed}
+              />
 
-          <SidebarItemVariant
-            icon={QuestionIcon}
-            text="Help & Support"
-            href="/help"
-            isCollapsed={isCollapsed}
-          />
-        </nav>
-
-        {!isAuthenticated && (
-          <LogIn isCollapsed={isCollapsed} />
+              <SidebarItemVariant
+                icon={QuestionIcon}
+                text="Help & Support"
+                href="/help"
+                isCollapsed={isCollapsed}
+              />
+            </nav>
+            <LogOut isCollapsed={isCollapsed} />
+          </>
         )}
+
+        {status === "unauthenticated" && <LogIn isCollapsed={isCollapsed} />}
       </div>
     </section>
   );
@@ -110,6 +113,8 @@ interface MobileSidebarProps {
 export const MobileSidebar = ({ isOpen, onClose }: MobileSidebarProps) => {
   const sidebarRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
+  const { status } = useSession();
+  const isAuthenticated = status === "authenticated";
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -143,25 +148,31 @@ export const MobileSidebar = ({ isOpen, onClose }: MobileSidebarProps) => {
     >
       <div className="flex flex-col justify-between h-full w-full">
         <div className="flex flex-col gap-7">
-          <button>
-            <div className="flex gap-2 items-center text-sm text-gray-500 px-2 py-1.5">
-              <MagnifyingGlassIcon size={18} />
-              <span>Search goals & tasks</span>
-            </div>
-          </button>
+          {isAuthenticated && (
+            <button>
+              <div className="flex gap-2 items-center text-sm text-gray-500 px-2 py-1.5">
+                <MagnifyingGlassIcon size={18} />
+                <span>Search goals & tasks</span>
+              </div>
+            </button>
+          )}
 
           <nav className="flex flex-col gap-3">
             <SidebarItem icon={SparkleIcon} text="New Prompt" href="/home" />
-            <SidebarItem
-              icon={TerminalWindowIcon}
-              text="Console"
-              href="/console"
-            />
-            <SidebarItem
-              icon={CheckSquareOffsetIcon}
-              text="Goals & Tasks"
-              href="/goals"
-            />
+            {isAuthenticated && (
+              <>
+                <SidebarItem
+                  icon={TerminalWindowIcon}
+                  text="Console"
+                  href="/console"
+                />
+                <SidebarItem
+                  icon={CheckSquareOffsetIcon}
+                  text="Goals & Tasks"
+                  href="/goals"
+                />
+              </>
+            )}
             {/* <SidebarItem
               icon={TargetIcon}
               text="Objectives"
@@ -172,20 +183,25 @@ export const MobileSidebar = ({ isOpen, onClose }: MobileSidebarProps) => {
         </div>
 
         <div className="flex flex-col gap-3">
-          <nav className="flex flex-col gap-3">
-            <SidebarItemVariant
-              icon={GearIcon}
-              text="Settings"
-              href="/settings"
-            />
-            <SidebarItemVariant
-              icon={QuestionIcon}
-              text="Help & Support"
-              href="/help"
-            />
-          </nav>
+          {isAuthenticated && (
+            <>
+              <nav className="flex flex-col gap-3">
+                <SidebarItemVariant
+                  icon={GearIcon}
+                  text="Settings"
+                  href="/settings"
+                />
+                <SidebarItemVariant
+                  icon={QuestionIcon}
+                  text="Help & Support"
+                  href="/help"
+                />
+              </nav>
+              <LogOut />
+            </>
+          )}
 
-          <LogOut />
+          {status === "unauthenticated" && <LogIn />}
         </div>
       </div>
     </section>

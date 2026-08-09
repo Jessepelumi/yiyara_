@@ -6,7 +6,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React from "react";
 
-import { signOut } from "next-auth/react";
+import { signIn, signOut } from "next-auth/react";
 
 interface SidebarItemProps {
   icon: React.ElementType<IconProps>;
@@ -22,7 +22,7 @@ export const SidebarItem = ({
   isCollapsed,
 }: SidebarItemProps) => {
   const pathname = usePathname();
-  const isActive = pathname == href;
+  const isActive = pathname === href || pathname.startsWith(`${href}/`);
 
   return (
     <Link href={href}>
@@ -52,7 +52,7 @@ export const SidebarItemVariant = ({
   isCollapsed,
 }: SidebarItemProps) => {
   const pathname = usePathname();
-  const isActive = pathname == href;
+  const isActive = pathname === href || pathname.startsWith(`${href}/`);
 
   return (
     <Link href={href}>
@@ -76,7 +76,7 @@ export const SidebarItemVariant = ({
 };
 
 interface LogOutProps {
-  isCollapsed?: boolean,
+  isCollapsed?: boolean;
 }
 
 export const LogOut = ({ isCollapsed }: LogOutProps) => {
@@ -102,21 +102,15 @@ export const LogOut = ({ isCollapsed }: LogOutProps) => {
 };
 
 interface LogInProps {
-  isCollapsed?: boolean,
+  isCollapsed?: boolean;
 }
 
 export const LogIn = ({ isCollapsed }: LogInProps) => {
-  // const handleLogout = async () => {
-  //   // This clears the NextAuth cookie and the Django session/JWT
-  //   // from the browser's memory.
-  //   await signOut({
-  //     callbackUrl: "/",
-  //     redirect: true,
-  //   });
-  // };
-
   return (
-    <button onClick={()=>{}} className="p-0">
+    <button
+      onClick={() => signIn("google", { callbackUrl: "/home" })}
+      className="p-0"
+    >
       <div
         className={`flex items-center ${isCollapsed ? "gap-0" : "gap-2"} rounded-md px-2 py-1.5 text-sm text-blue-400 bg-blue-100 hover:text-blue-500 hover:bg-blue-200`}
       >
