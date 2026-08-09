@@ -74,7 +74,7 @@ NEXTAUTH_URL=http://localhost:3000
 NEXTAUTH_SECRET=your-secret-key
 GOOGLE_CLIENT_ID=your-google-client-id
 GOOGLE_CLIENT_SECRET=your-google-client-secret
-BACKEND_URL=http://localhost:8000
+BACKEND_URL=http://localhost:8000/api
 ```
 
 4. Run the development server:
