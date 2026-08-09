@@ -13,3 +13,16 @@ export interface Goal {
   due_date: string | null;
   tasks: Task[];
 }
+
+export interface TaskPreview {
+  title: string;
+  description: string;
+  due_date: string | null;
+}
+
+export interface GoalPreview {
+  title: string;
+  description: string;
+  due_date: string | null;
+  tasks: TaskPreview[];
+}

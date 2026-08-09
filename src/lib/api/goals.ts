@@ -2,7 +2,7 @@
 // retrieve a list of stored goals with associated tasks
 
 import { apiClient } from "./client";
-import type { Goal } from "./types";
+import type { Goal, GoalPreview } from "./types";
 
 export const goalsApi = {
   // Decompose goal
@@ -10,6 +10,14 @@ export const goalsApi = {
     apiClient("/decompose/", {
       method: "POST",
       body: JSON.stringify({ text }),
+    }),
+
+  // Preview a decomposition without authentication or persistence
+  preview: (text: string): Promise<GoalPreview[]> =>
+    apiClient("/decompose/preview/", {
+      method: "POST",
+      body: JSON.stringify({ text }),
+      auth: false,
     }),
 
   // Fetch goals with associated tasks

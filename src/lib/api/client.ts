@@ -33,7 +33,7 @@ export async function apiClient<T>(
 
   if (!response.ok) {
     // Handle 401 Unauthorized (JWT Expired)
-    if (response.status === 401) {
+    if (response.status === 401 && auth) {
       console.warn("Session expired. Signing out...");
       await signOut({ callbackUrl: "/login" });
       throw new Error("Session expired. Please log in again.");
