@@ -10,7 +10,7 @@ interface ChatResponse {
   conversation_id: string;
   message: {
     id: string;
-    role: "user" | "model";
+    role: "user" | "assistant";
     content: string;
     created_at: string;
   };
@@ -18,7 +18,7 @@ interface ChatResponse {
 
 export interface ChatMessage {
   id?: string;
-  role: "user" | "model";
+  role: "user" | "assistant";
   content: string;
   created_at?: string;
 }

@@ -44,7 +44,21 @@ export async function apiClient<T>(
     }
 
     const text = await response.text();
-    throw new Error(`Error ${response.status}: ${text}`);
+    try {
+      const payload = JSON.parse(text) as {
+        error?: string;
+        message?: string;
+        detail?: string;
+      };
+      throw new Error(
+        payload.message || payload.detail || payload.error || `Request failed (${response.status})`,
+      );
+    } catch (error) {
+      if (error instanceof SyntaxError) {
+        throw new Error(text || `Request failed (${response.status})`);
+      }
+      throw error;
+    }
   }
 
   if (response.status === 204) {
