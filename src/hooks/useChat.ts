@@ -1,35 +1,34 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
-import { sendChatMessage } from "@/lib/api/chat";
+import { chatApi } from "@/lib/api/chat";
 
-export const useChat = (goalId?: string) => {
+interface SendMessageInput {
+  content: string;
+  scopeGoalId?: string;
+  planVersion: number;
+}
+
+export const useChat = (planId: string) => {
   const queryClient = useQueryClient();
-  const [activeConversationId, setActiveConversationId] = useState<
-    string | null
-  >(null);
 
-  const {
-    mutate: sendMessage,
-    isPending,
-    error,
-  } = useMutation({
-    mutationFn: (content: string) =>
-      sendChatMessage({
+  const mutation = useMutation({
+    mutationFn: ({ content, scopeGoalId, planVersion }: SendMessageInput) =>
+      chatApi.send(planId, {
         content,
-        conversation_id: activeConversationId || undefined,
-        goal_id: !activeConversationId ? goalId : undefined,
+        scope_goal_id: scopeGoalId,
+        plan_version: planVersion,
+        client_id: crypto.randomUUID(),
       }),
-    onSuccess: (data) => {
-      // Lock in the conversation ID so we don't keep sending goal_id
-      if (!activeConversationId) {
-        setActiveConversationId(data.conversation_id);
-      }
-
-      // Invalidate existing goals list in case the AI added new goals/tasks
-      queryClient.invalidateQueries({ queryKey: ["messages", goalId] });
-      queryClient.invalidateQueries({ queryKey: ["goals"] });
+    onSuccess: async () => {
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["messages", planId] }),
+        queryClient.invalidateQueries({ queryKey: ["changes", planId] }),
+      ]);
     },
   });
 
-  return { sendMessage, isPending, error };
+  return {
+    sendMessage: mutation.mutate,
+    isPending: mutation.isPending,
+    error: mutation.error,
+  };
 };
