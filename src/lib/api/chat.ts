@@ -1,43 +1,66 @@
 import { apiClient } from "./client";
+import type { Plan, PlanChange } from "./types";
 
 interface ChatRequest {
   content: string;
-  goal_id?: string;
-  conversation_id?: string;
+  scope_goal_id?: string;
+  client_id: string;
+  plan_version: number;
 }
 
-interface ChatResponse {
-  conversation_id: string;
-  message: {
-    id: string;
-    role: "user" | "assistant";
-    content: string;
-    created_at: string;
-  };
+export interface MessageChangeMetadata {
+  id: string;
+  status: PlanChange["status"];
+  summary: string;
+  operations: PlanChange["operations"];
+  base_version: number;
 }
 
 export interface ChatMessage {
-  id?: string;
-  role: "user" | "assistant";
+  id: string;
+  role: "user" | "assistant" | "system";
   content: string;
-  created_at?: string;
+  scope_goal_id: string | null;
+  metadata: {
+    change?: MessageChangeMetadata;
+  };
+  client_id: string | null;
+  created_at: string;
 }
 
-export const sendChatMessage = async (
-  data: ChatRequest,
-): Promise<ChatResponse> => {
-  // Pass the method and body in the options object
-  return await apiClient<ChatResponse>("/conversations/chat/", {
-    method: "POST",
-    body: JSON.stringify(data),
-  });
-};
+export interface ChatResponse {
+  conversation_id: string;
+  messages: ChatMessage[];
+  change: PlanChange | null;
+}
 
-export const getChatHistory = async (
-  goalId: string,
-): Promise<ChatMessage[]> => {
-  // This hits your new Django endpoint that filters messages by goal_id
-  return await apiClient<ChatMessage[]>(`/conversations/history/${goalId}/`, {
-    method: "GET",
-  });
+export interface ChangeMutationResponse {
+  plan: Plan;
+  change: PlanChange;
+}
+
+export const chatApi = {
+  messages: (planId: string): Promise<ChatMessage[]> =>
+    apiClient(`/conversations/plans/${planId}/messages/`),
+
+  send: (planId: string, data: ChatRequest): Promise<ChatResponse> =>
+    apiClient(`/conversations/plans/${planId}/messages/`, {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+
+  applyChange: (
+    planId: string,
+    changeId: string,
+  ): Promise<ChangeMutationResponse> =>
+    apiClient(
+      `/conversations/plans/${planId}/changes/${changeId}/apply/`,
+      { method: "POST" },
+    ),
+
+  rejectChange: (planId: string, changeId: string): Promise<PlanChange> =>
+    apiClient(
+      `/conversations/plans/${planId}/changes/${changeId}/reject/`,
+      { method: "POST" },
+    ),
 };
