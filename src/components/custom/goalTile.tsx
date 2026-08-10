@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 
 interface GoalTileProps {
   id: string;
+  planId: string;
   title: string;
   count: number;
   isOpen: boolean;
@@ -18,6 +19,7 @@ interface GoalTileProps {
 
 export const GoalTile = ({
   id,
+  planId,
   title,
   count,
   isOpen,
@@ -29,7 +31,7 @@ export const GoalTile = ({
 
   const handleOpenConsole = (e: React.MouseEvent) => {
     e.stopPropagation();
-    router.push(`/console/${id}`);
+    router.push(`/console/${planId}?goal=${id}`);
   };
 
   const handleDelete = (e: React.MouseEvent) => {
