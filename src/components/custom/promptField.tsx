@@ -11,6 +11,8 @@ interface PromptFieldProps {
   disabled: boolean;
   onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
   onSubmit: () => void;
+  placeholder?: string;
+  pendingPlaceholder?: string;
 }
 
 export const PromptField = ({
@@ -19,6 +21,8 @@ export const PromptField = ({
   disabled,
   onChange,
   onSubmit,
+  placeholder = "Ask whatever you want...",
+  pendingPlaceholder = "Yiyara is decomposing...",
 }: PromptFieldProps) => {
   // Enter key to submit & shift + enter for new lines
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -37,24 +41,34 @@ export const PromptField = ({
           onKeyDown={handleKeyDown}
           disabled={disabled || isPending}
           placeholder={
-            isPending ? "Zimna is decomposing..." : "Ask whatever you want..."
+            isPending ? pendingPlaceholder : placeholder
           }
           className="[field-sizing-content] w-full min-h-10 max-h-48 p-2 outline-none border-none resize-none overflow-y-auto text-sm"
         ></textarea>
 
         <div className="flex justify-between items-center">
           <div className="flex gap-3 px-1">
-            <button className="text-gray-500 hover:text-blue-700">
+            <button
+              type="button"
+              aria-label="Use microphone"
+              className="text-gray-500 hover:text-blue-700"
+            >
               <MicrophoneIcon size={20} />
             </button>
 
-            <button className="text-gray-500 hover:text-blue-700">
+            <button
+              type="button"
+              aria-label="Attach file"
+              className="text-gray-500 hover:text-blue-700"
+            >
               <PaperclipIcon size={20} />
             </button>
           </div>
 
           <div>
             <button
+              type="button"
+              aria-label="Send prompt"
               onClick={onSubmit}
               disabled={disabled || isPending || !value.trim()}
               className="p-2 rounded-lg text-blue-600 bg-linear-to-r from-blue-200 via-blue-200 via-20% to-purple-300 hover:text-blue-700"
