@@ -10,11 +10,12 @@ import { useDeleteGoal } from "@/hooks/useDeleteGoal";
 
 interface GoalAccordionProps {
   id: string;
+  planId: string;
   title: string;
   tasks: Task[];
 }
 
-export const GoalAccordion = ({ id, title, tasks }: GoalAccordionProps) => {
+export const GoalAccordion = ({ id, planId, title, tasks }: GoalAccordionProps) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const { mutate: deleteGoal, isPending: isDeleting } = useDeleteGoal();
@@ -27,6 +28,7 @@ export const GoalAccordion = ({ id, title, tasks }: GoalAccordionProps) => {
     <div className="w-ful space-y-1.5 overflow-hidden transition-all mb-3">
       <GoalTile
         id={id}
+        planId={planId}
         title={title}
         count={tasks.length}
         isOpen={isOpen}

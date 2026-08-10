@@ -42,6 +42,7 @@ export default function Goals() {
             <GoalAccordion
               key={goal.id}
               id={goal.id}
+              planId={goal.plan_id}
               title={goal.title}
               tasks={goal.tasks}
             />
