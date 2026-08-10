@@ -2,46 +2,46 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useGoals } from "@/hooks/useGoals";
 import { Button } from "@/components/ui/button";
 import { TerminalWindowIcon } from "@phosphor-icons/react/dist/ssr";
+import { usePlans } from "@/hooks/usePlans";
 
 export default function ConsoleRoot() {
   const router = useRouter();
-  const { data: goals, isLoading } = useGoals();
+  const { data: plans, isLoading } = usePlans();
 
   useEffect(() => {
-    if (!isLoading && goals) {
-      if (goals.length > 0) {
-        router.replace(`/console/${goals[0].id}`);
-      }
-      // Note: If goals.length === 0, we stay on this page to show the empty state logic below
+    const firstPlan = plans?.[0];
+    if (!isLoading && firstPlan) {
+      const query = firstPlan.first_goal_id
+        ? `?goal=${firstPlan.first_goal_id}`
+        : "";
+      router.replace(`/console/${firstPlan.id}${query}`);
     }
-  }, [goals, isLoading, router]);
+  }, [plans, isLoading, router]);
 
-  // 1. Show NOTHING or a clean spinner while determining where to go
-  if (isLoading) {
+  if (isLoading || plans?.length) {
     return (
       <div className="flex h-full w-full items-center justify-center">
-        <div className="animate-pulse flex flex-col items-center gap-2">
+        <div className="flex animate-pulse flex-col items-center gap-2">
           <TerminalWindowIcon size={32} className="text-blue-200" />
-          <p className="text-xs text-slate-400">Booting Zimna Terminal...</p>
+          <p className="text-xs text-slate-400">Opening drawing board...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="flex h-full w-full flex-col items-center justify-center text-center p-10">
-      <div className="bg-blue-50 p-6 rounded-full mb-4">
+    <div className="flex h-full w-full flex-col items-center justify-center p-10 text-center">
+      <div className="mb-4 rounded-full bg-blue-50 p-6">
         <TerminalWindowIcon size={48} className="text-blue-600" />
       </div>
-      <h2 className="text-xl font-bold">No Goal Selected</h2>
-      <p className="text-slate-500 max-w-xs mx-auto mt-2">
-        Select a goal from your list or start a new prompt to open the console.
+      <h2 className="text-xl font-bold">No drawing board yet</h2>
+      <p className="mx-auto mt-2 max-w-xs text-slate-500">
+        Start with one ambition. Yiyara will build your first board.
       </p>
-      <Button className="mt-6" onClick={() => router.push("/goals")}>
-        View Goal List
+      <Button className="mt-6" onClick={() => router.push("/home")}>
+        Start new ambition
       </Button>
     </div>
   );

@@ -1,133 +1,136 @@
 "use client";
 
-import { useState, useRef, useEffect, useMemo } from "react";
-import { PromptField } from "@/components/custom/promptField";
-import { useChat } from "@/hooks/useChat";
-import { useParams } from "next/navigation";
-import { useQuery } from "@tanstack/react-query";
-import { getChatHistory, type ChatMessage } from "@/lib/api/chat";
+import { useState } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
+import { BoardCanvas } from "@/components/console/BoardCanvas";
+import { BoardNavigator } from "@/components/console/BoardNavigator";
+import { ChatPanel } from "@/components/console/ChatPanel";
+import { usePlan, usePlans } from "@/hooks/usePlans";
+import { plansApi } from "@/lib/api/plans";
 
-export default function Console() {
+export default function ConsoleBoard() {
   const params = useParams();
-  const goalId = params.id as string;
-
-  const { sendMessage, isPending } = useChat(goalId);
-  const [inputValue, setInputValue] = useState("");
-  const scrollRef = useRef<HTMLDivElement>(null);
-
-  // Fetch history
-  const { data: history, isLoading } = useQuery({
-    queryKey: ["messages", goalId],
-    queryFn: () => getChatHistory(goalId),
-    enabled: !!goalId, // Only fetch if we have an ID
-    retry: false,
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const queryClient = useQueryClient();
+  const planId = params.id as string;
+  const { data: plan, isLoading, isError, error } = usePlan(planId);
+  const { data: plans = [] } = usePlans();
+  const [mobilePanel, setMobilePanel] = useState<"board" | "chat">("board");
+  const { data: revisions = [] } = useQuery({
+    queryKey: ["revisions", planId],
+    queryFn: () => plansApi.revisions(planId),
+  });
+  const restoreMutation = useMutation({
+    mutationFn: (version: number) => plansApi.restoreRevision(planId, version),
+    onSuccess: async (restoredPlan) => {
+      queryClient.setQueryData(["plan", planId], restoredPlan);
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["plans"] }),
+        queryClient.invalidateQueries({ queryKey: ["goals"] }),
+        queryClient.invalidateQueries({ queryKey: ["revisions", planId] }),
+      ]);
+    },
   });
 
-  // Local state ONLY for the message currently being sent optimistically
-  const [optimisticMessages, setOptimisticMessages] = useState<ChatMessage[]>(
-    [],
-  );
+  const requestedGoalId = searchParams.get("goal") || undefined;
+  const selectedGoalId = plan?.goals.some(
+    (goal) => goal.id === requestedGoalId,
+  )
+    ? requestedGoalId
+    : undefined;
 
-  // DERIVED STATE: Merge history and optimistic messages
-  // This calculates 'allMessages' every render. No useEffect needed.
-  const allMessages = useMemo(() => {
-    const serverMessages = history || [];
-
-    // Filter out optimistic messages that match content already in history
-    // This prevents the "double message" flicker when the server responds
-    const uniqueOptimistic = optimisticMessages.filter(
-      (opt) => !serverMessages.some((serv) => serv.content === opt.content),
-    );
-
-    return [...serverMessages, ...uniqueOptimistic];
-  }, [history, optimisticMessages]);
-
-  const handleSubmit = () => {
-    if (!inputValue.trim() || isPending) return;
-
-    const userMessage: ChatMessage = {
-      role: "user",
-      content: inputValue,
-    };
-
-    // Add to optimistic list immediately
-    setOptimisticMessages((prev) => [...prev, userMessage]);
-    setInputValue("");
-
-    sendMessage(userMessage.content);
+  const selectGoal = (goalId?: string) => {
+    const query = goalId ? `?goal=${goalId}` : "";
+    router.replace(`/console/${planId}${query}`, { scroll: false });
   };
 
-  useEffect(() => {
-    scrollRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [allMessages]);
+  const restoreRevision = (version: number) => {
+    if (confirm(`Restore board version ${version}? Current state stays in history.`)) {
+      restoreMutation.mutate(version);
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <div className="flex h-full w-full items-center justify-center">
+        <p className="animate-pulse text-sm text-gray-400">Opening drawing board...</p>
+      </div>
+    );
+  }
+
+  if (isError || !plan) {
+    return (
+      <div className="flex h-full w-full items-center justify-center text-center">
+        <div>
+          <h2 className="font-semibold text-gray-900">Board unavailable</h2>
+          <p className="mt-1 text-sm text-gray-500">{error?.message}</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="pb-3 h-full w-full">
-      <div className="flex flex-col h-full w-full items-center gap-1.5">
-        <div className="flex-1 w-full lg:w-1/2 overflow-y-scroll space-y-2 no-scrollbar">
-          {isLoading ? (
-            <div className="flex flex-col gap-4">
-              {/* Skeleton loaders or a simple pulse */}
-              <div className="h-10 w-3/4 bg-slate-100 animate-pulse rounded-lg" />
-              <div className="h-10 w-1/2 self-end bg-blue-100 animate-pulse rounded-lg" />
-            </div>
-          ) : allMessages.length === 0 ? (
-            <div className="text-center text-slate-400 py-20">
-              Start a chat...
-            </div>
-          ) : (
-            allMessages.map((m, i) => (
-              <div
-                key={i}
-                className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}
-              >
-                <div
-                  className={`p-4 rounded-2xl text-sm max-w-[85%] ${
-                    m.role === "user"
-                      ? "bg-blue-600 text-white"
-                      : "bg-slate-100 border"
-                  }`}
-                >
-                  {m.content}
-                </div>
-              </div>
-            ))
-          )}
-          <div ref={scrollRef} />
-        </div>
-
-        {/* <div className="flex-1 w-full lg:w-1/2 overflow-y-scroll no-scrollbar">
-          chats here
-          {messages.map((m, i) => (
-            <div
-              key={i}
-              className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}
-            >
-              <div
-                className={`p-4 rounded-2xl text-sm max-w-[85%] ${
-                  m.role === "user"
-                    ? "bg-blue-600 text-white"
-                    : "bg-slate-100 border"
-                }`}
-              >
-                {m.content}
-              </div>
-            </div>
+    <div className="flex h-full min-h-0 w-full flex-col overflow-hidden rounded-t-xl border bg-white">
+      <div className="flex items-center gap-2 border-b p-2 lg:hidden">
+        <button
+          onClick={() => setMobilePanel("board")}
+          className={`flex-1 rounded-md px-3 py-2 text-sm ${
+            mobilePanel === "board" ? "bg-blue-600 text-white" : "bg-gray-50"
+          }`}
+        >
+          Plan
+        </button>
+        <button
+          onClick={() => setMobilePanel("chat")}
+          className={`flex-1 rounded-md px-3 py-2 text-sm ${
+            mobilePanel === "chat" ? "bg-blue-600 text-white" : "bg-gray-50"
+          }`}
+        >
+          Chat
+        </button>
+        <select
+          value={planId}
+          onChange={(event) => router.push(`/console/${event.target.value}`)}
+          className="max-w-36 rounded-md border px-2 py-2 text-xs"
+          aria-label="Choose board"
+        >
+          {plans.map((item) => (
+            <option key={item.id} value={item.id}>
+              {item.title}
+            </option>
           ))}
-          <div ref={scrollRef} />
-        </div> */}
+        </select>
+      </div>
 
-        <div className="space-y-1.5 w-full lg:w-1/2">
-          <PromptField
-            value={inputValue}
-            isPending={isPending}
-            disabled={isPending}
-            onChange={(e) => setInputValue(e.target.value)}
-            onSubmit={handleSubmit}
+      <div className="grid min-h-0 flex-1 xl:grid-cols-[14rem_minmax(0,1.1fr)_minmax(20rem,0.9fr)] lg:grid-cols-[minmax(0,1.1fr)_minmax(20rem,0.9fr)]">
+        <BoardNavigator plans={plans} currentPlanId={planId} />
+        <div
+          className={`${mobilePanel === "board" ? "flex" : "hidden"} min-h-0 lg:flex`}
+        >
+          <BoardCanvas
+            title={plan.title}
+            rawInput={plan.raw_input}
+            version={plan.version}
+            goals={plan.goals}
+            selectedGoalId={selectedGoalId}
+            onSelectGoal={selectGoal}
+            revisions={revisions}
+            onRestoreRevision={restoreRevision}
+            isRestoring={restoreMutation.isPending}
           />
-          <p className="text-xs text-center text-gray-500">
-            Zimna can make mistakes. Check important info and dates.
-          </p>
+        </div>
+        <div
+          className={`${mobilePanel === "chat" ? "flex" : "hidden"} min-h-0 lg:flex`}
+        >
+          <ChatPanel
+            planId={plan.id}
+            planVersion={plan.version}
+            goals={plan.goals}
+            scopeGoalId={selectedGoalId}
+            onScopeChange={selectGoal}
+          />
         </div>
       </div>
     </div>
