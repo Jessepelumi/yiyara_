@@ -7,15 +7,14 @@ import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { goalsApi } from "@/lib/api/goals";
-import type { Goal, GoalPreview } from "@/lib/api/types";
+import type { Plan, PreviewPlan } from "@/lib/api/types";
 import { PromptField } from "@/components/custom/promptField";
 import { useRouter } from "next/navigation";
-import { signIn, useSession } from "next-auth/react";
-import { GoalPreviewList } from "@/components/custom/goalPreview";
+import { useSession } from "next-auth/react";
 
 type DecompositionResult =
-  | { mode: "persisted"; goals: Goal[] }
-  | { mode: "preview"; goals: GoalPreview[] };
+  | { mode: "persisted"; plan: Plan }
+  | { mode: "preview"; plan: PreviewPlan };
 
 export default function Home() {
   const router = useRouter();
@@ -25,33 +24,37 @@ export default function Home() {
 
   const [showExamples, setShowExamples] = useState(false);
   const [inputValue, setInputValue] = useState("");
-  const [previewGoals, setPreviewGoals] = useState<GoalPreview[]>([]);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const mutation = useMutation<DecompositionResult, Error, string>({
     mutationFn: async (text) => {
       if (isAuthenticated) {
-        return { mode: "persisted", goals: await goalsApi.decompose(text) };
+        return { mode: "persisted", plan: await goalsApi.decompose(text) };
       }
 
-      return { mode: "preview", goals: await goalsApi.preview(text) };
+      return { mode: "preview", plan: await goalsApi.preview(text) };
     },
     onMutate: () => {
       setErrorMessage(null);
-      setPreviewGoals([]);
     },
     onSuccess: async (result) => {
       setInputValue("");
 
       if (result.mode === "preview") {
-        setPreviewGoals(result.goals);
+        sessionStorage.setItem("yiyara-preview-plan", JSON.stringify(result.plan));
+        router.push("/console/preview?goal=preview-goal-0");
         return;
       }
 
-      await queryClient.invalidateQueries({ queryKey: ["goals"] });
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["goals"] }),
+        queryClient.invalidateQueries({ queryKey: ["plans"] }),
+      ]);
 
-      if (result.goals.length > 0) {
-        router.push(`/console/${result.goals[0].id}`);
+      if (result.plan.goals.length > 0) {
+        router.push(
+          `/console/${result.plan.id}?goal=${result.plan.goals[0].id}`,
+        );
       }
     },
     onError: (error: Error) => {
@@ -138,20 +141,6 @@ export default function Home() {
           </p>
         )}
 
-        {previewGoals.length > 0 && (
-          <>
-            <GoalPreviewList goals={previewGoals} />
-            <div className="rounded-lg border border-blue-100 bg-blue-50 p-4 text-sm text-blue-900">
-              Want future plans saved to your dashboard?{" "}
-              <button
-                onClick={() => signIn("google", { callbackUrl: "/home" })}
-                className="font-semibold underline underline-offset-2"
-              >
-                Log in before your next prompt.
-              </button>
-            </div>
-          </>
-        )}
       </div>
     </section>
   );
