@@ -52,7 +52,7 @@ export function MainLayoutWrapper({ children }: { children: React.ReactNode }) {
             >
               <ListIcon size={20} />
             </Button>
-            <h1>Zimna</h1>
+            <h1>Yiyara</h1>
           </div>
 
           <div className="flex gap-2 items-center">

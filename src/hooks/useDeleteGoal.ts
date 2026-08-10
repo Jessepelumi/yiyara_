@@ -12,7 +12,7 @@ export const useDeleteGoal = () => {
       queryClient.invalidateQueries({ queryKey: ["goals"] });
     },
     onError: (error: Error) => {
-      console.error("Zimna Delete Error:", error.message);
+      console.error("Yiyara Delete Error:", error.message);
     },
   });
 };

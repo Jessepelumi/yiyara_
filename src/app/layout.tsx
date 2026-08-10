@@ -10,7 +10,7 @@ const sen = Sen({
 });
 
 export const metadata: Metadata = {
-  title: "Zimna AI",
+  title: "Yiyara AI",
   description: "Personalized Productivity",
   icons: {
     icon: "/icon.png",

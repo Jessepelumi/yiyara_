@@ -1,6 +1,6 @@
-# Zimna AI
+# Yiyara AI
 
-Zimna AI is a personalized productivity application that helps users break down their goals into actionable objectives and tasks using AI-powered goal decomposition.
+Yiyara AI is a personalized productivity application that helps users break down their goals into actionable objectives and tasks using AI-powered goal decomposition.
 
 ## Features
 
@@ -56,7 +56,7 @@ This document covers:
 
 ```bash
 git clone <repository-url>
-cd zimna-ai
+cd yiyara-ai
 ```
 
 2. Install dependencies:

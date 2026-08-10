@@ -1,6 +1,6 @@
-# Zimna AI - Frontend Architecture & System Overview
+# Yiyara AI - Frontend Architecture & System Overview
 
-This document provides a comprehensive explanation of how the Zimna AI frontend works, what each component does, and how everything connects together. This is essential reading for developers who need to understand the system's architecture and design patterns.
+This document provides a comprehensive explanation of how the Yiyara AI frontend works, what each component does, and how everything connects together. This is essential reading for developers who need to understand the system's architecture and design patterns.
 
 ---
 
@@ -20,7 +20,7 @@ This document provides a comprehensive explanation of how the Zimna AI frontend 
 
 ## Architecture Overview
 
-Zimna AI uses a **Next.js 16 App Router** architecture with modern React patterns. The application is built with the following principles:
+Yiyara AI uses a **Next.js 16 App Router** architecture with modern React patterns. The application is built with the following principles:
 
 ### Tech Stack
 

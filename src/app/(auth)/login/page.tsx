@@ -72,7 +72,7 @@ export default function Login() {
                   onChange={(e) => {
                     setEmail(e.target.value);
                   }}
-                  placeholder="productivedoe@zimna.com"
+                  placeholder="productivedoe@yiyara.com"
                   required
                   disabled={showOtpField}
                   className={
