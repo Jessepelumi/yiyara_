@@ -4,6 +4,10 @@ export default withAuth({
   pages: {
     signIn: "/login",
   },
+  callbacks: {
+    authorized: ({ token, req }) =>
+      req.nextUrl.pathname === "/console/preview" || Boolean(token),
+  },
 });
 
 // List every route that requires a login
