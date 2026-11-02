@@ -18,7 +18,7 @@ export function ScrollCue({ targetId }: { targetId: string }) {
       aria-label="Scroll to more content"
       className="absolute bottom-5 left-1/2 -translate-x-1/2 sm:bottom-6 flex min-h-11 items-center justify-end gap-2 rounded-full px-2 text-sm text-muted-foreground cursor-pointer transition-colors motion-reduce:transition-none hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
     >
-      <span>Scroll</span>
+      <span>Scroll Down</span>
       <span className="motion-safe:animate-bounce motion-safe:[animation-duration:1.8s]">
         <CaretDoubleDownIcon size={18} aria-hidden="true" />
       </span>
