@@ -11,16 +11,13 @@ import {
   //TargetIcon,
   TerminalWindowIcon,
 } from "@phosphor-icons/react/dist/ssr";
-import { LogIn, LogOut, SidebarItem, SidebarItemVariant } from "./sidebarItem";
+import { SidebarItem, SidebarItemVariant } from "./sidebarItem";
 import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { useSession } from "next-auth/react";
 
 export const Sidebar = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const { status } = useSession();
-  const isAuthenticated = status === "authenticated";
 
   return (
     <section
@@ -36,7 +33,7 @@ export const Sidebar = () => {
             <SidebarSimpleIcon size={20} />
           </Button>
 
-          {isAuthenticated && !isCollapsed && (
+          {!isCollapsed && (
             <Button
               variant="link"
               className="text-gray-500 hover:text-blue-700"
@@ -54,22 +51,18 @@ export const Sidebar = () => {
             isCollapsed={isCollapsed}
           />
 
-          {isAuthenticated && (
-            <>
-              <SidebarItem
-                icon={TerminalWindowIcon}
-                text="Console"
-                href="/console"
-                isCollapsed={isCollapsed}
-              />
-              <SidebarItem
-                icon={CheckSquareOffsetIcon}
-                text="Goals & Tasks"
-                href="/goals"
-                isCollapsed={isCollapsed}
-              />
-            </>
-          )}
+          <SidebarItem
+            icon={TerminalWindowIcon}
+            text="Console"
+            href="/console"
+            isCollapsed={isCollapsed}
+          />
+          <SidebarItem
+            icon={CheckSquareOffsetIcon}
+            text="Goals & Tasks"
+            href="/goals"
+            isCollapsed={isCollapsed}
+          />
 
           {/* <SidebarItem icon={TargetIcon} text="Objectives" href="/objectives" />
           <SidebarItem icon={NetworkIcon} text="Goal Connections" href="" /> */}
@@ -77,28 +70,21 @@ export const Sidebar = () => {
       </div>
 
       <div className="flex flex-col gap-3">
-        {isAuthenticated && (
-          <>
-            <nav className="flex flex-col gap-3">
-              <SidebarItemVariant
-                icon={GearIcon}
-                text="Settings"
-                href="/settings"
-                isCollapsed={isCollapsed}
-              />
+        <nav className="flex flex-col gap-3">
+          <SidebarItemVariant
+            icon={GearIcon}
+            text="Settings"
+            href="/settings"
+            isCollapsed={isCollapsed}
+          />
 
-              <SidebarItemVariant
-                icon={QuestionIcon}
-                text="Help & Support"
-                href="/help"
-                isCollapsed={isCollapsed}
-              />
-            </nav>
-            <LogOut isCollapsed={isCollapsed} />
-          </>
-        )}
-
-        {status === "unauthenticated" && <LogIn isCollapsed={isCollapsed} />}
+          <SidebarItemVariant
+            icon={QuestionIcon}
+            text="Help & Support"
+            href="/help"
+            isCollapsed={isCollapsed}
+          />
+        </nav>
       </div>
     </section>
   );
@@ -113,8 +99,6 @@ interface MobileSidebarProps {
 export const MobileSidebar = ({ isOpen, onClose }: MobileSidebarProps) => {
   const sidebarRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
-  const { status } = useSession();
-  const isAuthenticated = status === "authenticated";
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -148,31 +132,25 @@ export const MobileSidebar = ({ isOpen, onClose }: MobileSidebarProps) => {
     >
       <div className="flex flex-col justify-between h-full w-full">
         <div className="flex flex-col gap-7">
-          {isAuthenticated && (
-            <button>
-              <div className="flex gap-2 items-center text-sm text-gray-500 px-2 py-1.5">
-                <MagnifyingGlassIcon size={18} />
-                <span>Search goals & tasks</span>
-              </div>
-            </button>
-          )}
+          <button>
+            <div className="flex gap-2 items-center text-sm text-gray-500 px-2 py-1.5">
+              <MagnifyingGlassIcon size={18} />
+              <span>Search goals & tasks</span>
+            </div>
+          </button>
 
           <nav className="flex flex-col gap-3">
             <SidebarItem icon={SparkleIcon} text="New Prompt" href="/home" />
-            {isAuthenticated && (
-              <>
-                <SidebarItem
-                  icon={TerminalWindowIcon}
-                  text="Console"
-                  href="/console"
-                />
-                <SidebarItem
-                  icon={CheckSquareOffsetIcon}
-                  text="Goals & Tasks"
-                  href="/goals"
-                />
-              </>
-            )}
+            <SidebarItem
+              icon={TerminalWindowIcon}
+              text="Console"
+              href="/console"
+            />
+            <SidebarItem
+              icon={CheckSquareOffsetIcon}
+              text="Goals & Tasks"
+              href="/goals"
+            />
             {/* <SidebarItem
               icon={TargetIcon}
               text="Objectives"
@@ -183,25 +161,18 @@ export const MobileSidebar = ({ isOpen, onClose }: MobileSidebarProps) => {
         </div>
 
         <div className="flex flex-col gap-3">
-          {isAuthenticated && (
-            <>
-              <nav className="flex flex-col gap-3">
-                <SidebarItemVariant
-                  icon={GearIcon}
-                  text="Settings"
-                  href="/settings"
-                />
-                <SidebarItemVariant
-                  icon={QuestionIcon}
-                  text="Help & Support"
-                  href="/help"
-                />
-              </nav>
-              <LogOut />
-            </>
-          )}
-
-          {status === "unauthenticated" && <LogIn />}
+          <nav className="flex flex-col gap-3">
+            <SidebarItemVariant
+              icon={GearIcon}
+              text="Settings"
+              href="/settings"
+            />
+            <SidebarItemVariant
+              icon={QuestionIcon}
+              text="Help & Support"
+              href="/help"
+            />
+          </nav>
         </div>
       </div>
     </section>

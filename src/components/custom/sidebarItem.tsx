@@ -1,12 +1,9 @@
 "use client";
 
 import { IconProps } from "@phosphor-icons/react";
-import { SignInIcon, SignOutIcon } from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React from "react";
-
-import { signIn, signOut } from "next-auth/react";
 
 interface SidebarItemProps {
   icon: React.ElementType<IconProps>;
@@ -72,51 +69,5 @@ export const SidebarItemVariant = ({
         )}
       </div>
     </Link>
-  );
-};
-
-interface LogOutProps {
-  isCollapsed?: boolean;
-}
-
-export const LogOut = ({ isCollapsed }: LogOutProps) => {
-  const handleLogout = async () => {
-    // This clears the NextAuth cookie and the Django session/JWT
-    // from the browser's memory.
-    await signOut({
-      callbackUrl: "/",
-      redirect: true,
-    });
-  };
-
-  return (
-    <button onClick={handleLogout} className="p-0">
-      <div
-        className={`flex items-center ${isCollapsed ? "gap-0" : "gap-2"} rounded-md px-2 py-1.5 text-sm text-red-600 bg-red-100 hover:text-red-700 hover:bg-red-200`}
-      >
-        <SignOutIcon size={20} />
-        {isCollapsed ? "" : "Log out"}
-      </div>
-    </button>
-  );
-};
-
-interface LogInProps {
-  isCollapsed?: boolean;
-}
-
-export const LogIn = ({ isCollapsed }: LogInProps) => {
-  return (
-    <button
-      onClick={() => signIn("google", { callbackUrl: "/home" })}
-      className="p-0"
-    >
-      <div
-        className={`flex items-center ${isCollapsed ? "gap-0" : "gap-2"} rounded-md px-2 py-1.5 text-sm text-blue-400 bg-blue-100 hover:text-blue-500 hover:bg-blue-200`}
-      >
-        <SignInIcon size={20} />
-        {isCollapsed ? "" : "Log In"}
-      </div>
-    </button>
   );
 };
