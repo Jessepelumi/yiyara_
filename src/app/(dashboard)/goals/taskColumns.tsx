@@ -9,7 +9,7 @@ import {
 } from "@phosphor-icons/react/dist/ssr";
 import { ColumnDef } from "@tanstack/react-table";
 import { TableRowTitle } from "@/components/custom/tableRowTitle";
-import { Task } from "@/lib/api/types";
+import { Task } from "@/lib/types";
 import { StatusIndicator } from "@/components/custom/statusIndicator";
 // import { Checkbox } from "@/components/ui/checkbox";
 // import { Button } from "@/components/ui/button";

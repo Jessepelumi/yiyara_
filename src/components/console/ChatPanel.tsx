@@ -3,9 +3,9 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { PromptField } from "@/components/custom/promptField";
-import { chatApi } from "@/lib/api/chat";
-import { plansApi } from "@/lib/api/plans";
-import type { Goal, PlanChange, PlanOperation } from "@/lib/api/types";
+import { mockChat } from "@/lib/mocks";
+import { mockPlans } from "@/lib/mocks";
+import type { Goal, PlanChange, PlanOperation } from "@/lib/types";
 import { useChat } from "@/hooks/useChat";
 
 interface ChatPanelProps {
@@ -83,11 +83,11 @@ export function ChatPanel({
 
   const { data: messages = [], isLoading } = useQuery({
     queryKey: ["messages", planId],
-    queryFn: () => chatApi.messages(planId),
+    queryFn: () => mockChat.messages(planId),
   });
   const { data: changes = [] } = useQuery({
     queryKey: ["changes", planId],
-    queryFn: () => plansApi.changes(planId),
+    queryFn: () => mockPlans.changes(planId),
   });
 
   const changeMap = useMemo(
@@ -101,18 +101,19 @@ export function ChatPanel({
       queryClient.invalidateQueries({ queryKey: ["plans"] }),
       queryClient.invalidateQueries({ queryKey: ["goals"] }),
       queryClient.invalidateQueries({ queryKey: ["changes", planId] }),
+      queryClient.invalidateQueries({ queryKey: ["revisions", planId] }),
     ]);
   };
 
   const applyMutation = useMutation({
-    mutationFn: (changeId: string) => chatApi.applyChange(planId, changeId),
+    mutationFn: (changeId: string) => mockChat.applyChange(planId, changeId),
     onSuccess: async (data) => {
       queryClient.setQueryData(["plan", planId], data.plan);
       await refreshBoard();
     },
   });
   const rejectMutation = useMutation({
-    mutationFn: (changeId: string) => chatApi.rejectChange(planId, changeId),
+    mutationFn: (changeId: string) => mockChat.rejectChange(planId, changeId),
     onSuccess: refreshBoard,
   });
 

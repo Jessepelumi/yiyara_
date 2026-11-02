@@ -1,16 +1,16 @@
 import { useQuery } from "@tanstack/react-query";
-import { plansApi } from "@/lib/api/plans";
+import { mockPlans } from "@/lib/mocks";
 
 export const usePlans = () =>
   useQuery({
     queryKey: ["plans"],
-    queryFn: plansApi.list,
+    queryFn: mockPlans.list,
   });
 
 export const usePlan = (planId?: string) =>
   useQuery({
     queryKey: ["plan", planId],
-    queryFn: () => plansApi.detail(planId as string),
+    queryFn: () => mockPlans.detail(planId as string),
     enabled: Boolean(planId),
     retry: false,
   });

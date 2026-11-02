@@ -7,7 +7,7 @@ import { BoardCanvas } from "@/components/console/BoardCanvas";
 import { BoardNavigator } from "@/components/console/BoardNavigator";
 import { ChatPanel } from "@/components/console/ChatPanel";
 import { usePlan, usePlans } from "@/hooks/usePlans";
-import { plansApi } from "@/lib/api/plans";
+import { mockPlans } from "@/lib/mocks";
 
 export default function ConsoleBoard() {
   const params = useParams();
@@ -20,16 +20,17 @@ export default function ConsoleBoard() {
   const [mobilePanel, setMobilePanel] = useState<"board" | "chat">("board");
   const { data: revisions = [] } = useQuery({
     queryKey: ["revisions", planId],
-    queryFn: () => plansApi.revisions(planId),
+    queryFn: () => mockPlans.revisions(planId),
   });
   const restoreMutation = useMutation({
-    mutationFn: (version: number) => plansApi.restoreRevision(planId, version),
+    mutationFn: (version: number) => mockPlans.restoreRevision(planId, version),
     onSuccess: async (restoredPlan) => {
       queryClient.setQueryData(["plan", planId], restoredPlan);
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: ["plans"] }),
         queryClient.invalidateQueries({ queryKey: ["goals"] }),
         queryClient.invalidateQueries({ queryKey: ["revisions", planId] }),
+        queryClient.invalidateQueries({ queryKey: ["changes", planId] }),
       ]);
     },
   });

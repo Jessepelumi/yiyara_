@@ -6,54 +6,35 @@ import { ExamplePromptCard } from "@/components/custom/examplePrompt";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { goalsApi } from "@/lib/api/goals";
-import type { Plan, PreviewPlan } from "@/lib/api/types";
+import { mockGoals } from "@/lib/mocks";
+import type { Plan } from "@/lib/types";
 import { PromptField } from "@/components/custom/promptField";
 import { useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
-
-type DecompositionResult =
-  | { mode: "persisted"; plan: Plan }
-  | { mode: "preview"; plan: PreviewPlan };
 
 export default function Home() {
   const router = useRouter();
   const queryClient = useQueryClient();
-  const { data: session, status } = useSession();
-  const isAuthenticated = status === "authenticated";
 
   const [showExamples, setShowExamples] = useState(false);
   const [inputValue, setInputValue] = useState("");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const mutation = useMutation<DecompositionResult, Error, string>({
-    mutationFn: async (text) => {
-      if (isAuthenticated) {
-        return { mode: "persisted", plan: await goalsApi.decompose(text) };
-      }
-
-      return { mode: "preview", plan: await goalsApi.preview(text) };
-    },
+  const mutation = useMutation<Plan, Error, string>({
+    mutationFn: (text) => mockGoals.decompose(text),
     onMutate: () => {
       setErrorMessage(null);
     },
     onSuccess: async (result) => {
       setInputValue("");
 
-      if (result.mode === "preview") {
-        sessionStorage.setItem("yiyara-preview-plan", JSON.stringify(result.plan));
-        router.push("/console/preview?goal=preview-goal-0");
-        return;
-      }
-
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: ["goals"] }),
         queryClient.invalidateQueries({ queryKey: ["plans"] }),
       ]);
 
-      if (result.plan.goals.length > 0) {
+      if (result.goals.length > 0) {
         router.push(
-          `/console/${result.plan.id}?goal=${result.plan.goals[0].id}`,
+          `/console/${result.id}?goal=${result.goals[0].id}`,
         );
       }
     },
@@ -63,7 +44,7 @@ export default function Home() {
   });
 
   const handleSubmit = () => {
-    if (status !== "loading" && inputValue.trim()) {
+    if (inputValue.trim()) {
       mutation.mutate(inputValue);
     }
   };
@@ -79,9 +60,7 @@ export default function Home() {
         <div className="space-y-2">
           <header className="flex flex-col text-3xl lg:text-4xl">
             <b className="bg-linear-to-r from-blue-500 via-purple-500 via-40% to-purple-700 bg-clip-text text-transparent w-fit">
-              Hi there{isAuthenticated && session?.user?.name
-                ? `, ${session.user.name.split(" ")[0]}`
-                : ""}
+              Hi there
             </b>
             <b className="bg-linear-to-r from-blue-500 via-purple-500 via-40% to-purple-700 bg-clip-text  text-transparent w-fit">
               Let&apos;s get productive!
@@ -93,11 +72,6 @@ export default function Home() {
               I&apos;m here to assist you on your journey to achieving your
               goals, whatever they are.
             </p>
-            {!isAuthenticated && status !== "loading" && (
-              <p className="mt-1 text-sm text-blue-700">
-                Guest mode: generate a preview without saving anything.
-              </p>
-            )}
 
             <button
               onClick={() => setShowExamples(!showExamples)}
@@ -130,7 +104,7 @@ export default function Home() {
         <PromptField
           value={inputValue}
           isPending={mutation.isPending}
-          disabled={mutation.isPending || status === "loading"}
+          disabled={mutation.isPending}
           onChange={(e) => setInputValue(e.target.value)}
           onSubmit={handleSubmit}
         />
@@ -140,7 +114,6 @@ export default function Home() {
             {errorMessage}
           </p>
         )}
-
       </div>
     </section>
   );

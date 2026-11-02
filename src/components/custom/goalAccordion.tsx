@@ -5,7 +5,7 @@ import { useMemo, useState } from "react";
 import { GoalTile } from "./goalTile";
 import { DataTable } from "@/components/custom/datatable";
 import { taskColumns } from "@/app/(dashboard)/goals/taskColumns";
-import { Task } from "@/lib/api/types";
+import { Task } from "@/lib/types";
 import { useDeleteGoal } from "@/hooks/useDeleteGoal";
 
 interface GoalAccordionProps {

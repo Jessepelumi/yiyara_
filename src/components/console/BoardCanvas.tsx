@@ -1,4 +1,4 @@
-import type { Goal, PlanRevision } from "@/lib/api/types";
+import type { Goal, PlanRevision } from "@/lib/types";
 
 interface BoardCanvasProps {
   title: string;

@@ -1,15 +1,19 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { useMutation } from "@tanstack/react-query";
-import { goalsApi } from "@/lib/api/goals";
+import { mockGoals } from "@/lib/mocks";
 
 export const useDeleteGoal = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (id: string) => goalsApi.delete(id),
-    onSuccess: () => {
-      // Refresh the goals list immediately
-      queryClient.invalidateQueries({ queryKey: ["goals"] });
+    mutationFn: (id: string) => mockGoals.delete(id),
+    onSuccess: async () => {
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["goals"] }),
+        queryClient.invalidateQueries({ queryKey: ["plans"] }),
+        queryClient.invalidateQueries({ queryKey: ["plan"] }),
+        queryClient.invalidateQueries({ queryKey: ["revisions"] }),
+      ]);
     },
     onError: (error: Error) => {
       console.error("Yiyara Delete Error:", error.message);

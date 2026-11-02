@@ -1,4 +1,4 @@
-import type { GoalPreview } from "@/lib/api/types";
+import type { GoalPreview } from "@/lib/types";
 
 interface GoalPreviewListProps {
   goals: GoalPreview[];

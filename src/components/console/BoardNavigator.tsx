@@ -1,5 +1,5 @@
 import Link from "next/link";
-import type { PlanSummary } from "@/lib/api/types";
+import type { PlanSummary } from "@/lib/types";
 
 interface BoardNavigatorProps {
   plans: PlanSummary[];

@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { chatApi } from "@/lib/api/chat";
+import { mockChat } from "@/lib/mocks";
 
 interface SendMessageInput {
   content: string;
@@ -12,7 +12,7 @@ export const useChat = (planId: string) => {
 
   const mutation = useMutation({
     mutationFn: ({ content, scopeGoalId, planVersion }: SendMessageInput) =>
-      chatApi.send(planId, {
+      mockChat.send(planId, {
         content,
         scope_goal_id: scopeGoalId,
         plan_version: planVersion,
