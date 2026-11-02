@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import { Sen } from "next/font/google";
-import "./globals.css";
-import QueryProvider from "@/components/providers/QueryProvider";
+import "../styles/globals.css";
 
 const sen = Sen({
-  weight: "400",
   subsets: ["latin"],
+  display: "swap",
+  variable: "--font-sen",
 });
 
 export const metadata: Metadata = {
@@ -16,16 +16,14 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en">
-      <body className={`${sen.className} antialiased`}>
-        <QueryProvider>{children}</QueryProvider>
-      </body>
+    <html
+      lang="en"
+      data-theme="light"
+      className={`${sen.variable} antialiased`}
+    >
+      <body className="font-sans">{children}</body>
     </html>
   );
 }

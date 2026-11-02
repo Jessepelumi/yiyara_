@@ -1,5 +1,7 @@
-import { redirect } from "next/navigation";
-
 export default function AppHome() {
-  redirect("/home");
+  return (
+    <div>
+      <h1>This is the landing page</h1>
+    </div>
+  );
 }
