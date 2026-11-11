@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   title: "Yiyara AI",
   description: "Personalized Productivity",
   icons: {
-    icon: "/icon.png",
+    icon: "/yiyara-logo.png",
   },
 };
 
