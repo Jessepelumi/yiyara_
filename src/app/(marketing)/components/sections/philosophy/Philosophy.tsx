@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { ArrowRightIcon } from "@phosphor-icons/react/dist/ssr";
-import { SectionHeading } from "./shared/SectionHeading";
+import { SectionHeading } from "../../shared/SectionHeading";
 import { PhilosophyGrid } from "./PhilosophyGrid";
-import { SectionContainer } from "./shared/SectionContainer";
+import { SectionContainer } from "../../shared/SectionContainer";
 
 export const Philosophy = () => {
   return (
