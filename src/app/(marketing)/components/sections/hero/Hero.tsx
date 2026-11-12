@@ -3,7 +3,7 @@
 import { useRef, useState } from "react";
 import { CaretDoubleDownIcon } from "@phosphor-icons/react/dist/ssr";
 import { GuestInput } from "./GuestInput";
-import { SectionHeading } from "./SectionHeading";
+import { SectionHeading } from "../../shared/SectionHeading";
 import { ExamplePrompts } from "./ExamplePrompts";
 
 export const Hero = ({ targetId }: { targetId: string }) => {

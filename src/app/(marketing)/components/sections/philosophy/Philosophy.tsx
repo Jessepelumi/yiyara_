@@ -1,12 +1,15 @@
 import Link from "next/link";
 import { ArrowRightIcon } from "@phosphor-icons/react/dist/ssr";
-import { SectionHeading } from "./SectionHeading";
+import { SectionHeading } from "./shared/SectionHeading";
 import { PhilosophyGrid } from "./PhilosophyGrid";
-import { SectionContainer } from "./SectionContainer";
+import { SectionContainer } from "./shared/SectionContainer";
 
 export const Philosophy = () => {
   return (
-    <SectionContainer id="landing-content" className="flex flex-col pt-10 items-center">
+    <SectionContainer
+      id="landing-content"
+      className="flex flex-col pt-10 items-center"
+    >
       <SectionHeading
         title={
           <>
