@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { ArrowsClockwiseIcon } from "@phosphor-icons/react/dist/ssr";
-import { EXAMPLE_PROMPTS } from "./example-prompts";
+import { EXAMPLE_PROMPTS } from "@/data/example-prompts";
 
 interface ExamplePromptsProps {
   onSelect: (text: string) => void;
@@ -21,7 +21,6 @@ export function ExamplePrompts({ onSelect, disabled = false }: ExamplePromptsPro
   );
 
   const refresh = () => {
-    // CSS controls visibility; match its breakpoint only when advancing the list.
     const count = window.matchMedia("(min-width: 640px)").matches
       ? DESKTOP_COUNT
       : MOBILE_COUNT;

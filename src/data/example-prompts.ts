@@ -3,7 +3,6 @@ export interface ExamplePrompt {
   text: string;
 }
 
-// Short button labels map to editable, contextual ambitions for the guest input.
 export const EXAMPLE_PROMPTS: Record<string, ExamplePrompt> = {
   driving: {
     label: "Obtain driving licence",
