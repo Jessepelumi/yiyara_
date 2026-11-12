@@ -1,43 +1,12 @@
-import {
-  PlayIcon,
-  LightbulbIcon,
-  LightningIcon,
-} from "@phosphor-icons/react/dist/ssr";
-import type { ComponentType } from "react";
-
-interface UserJourneyData {
-  title: string;
-  description: string;
-  Icon: ComponentType<{ size?: number; weight?: "regular" | "bold" }>;
-}
-
-const userJourney: UserJourneyData[] = [
-  {
-    title: "Tell Yiyara what you want to achieve.",
-    description:
-      "Bring your ambitions, big or small. Yiyara helps you clarify what you're aiming for.",
-    Icon: PlayIcon,
-  },
-  {
-    title: "Make sense of the steps ahead.",
-    description:
-      "Yiyara helps break your ambitions into manageable steps, realistic timelines and actionable plans.",
-    Icon: LightbulbIcon,
-  },
-  {
-    title: "Make progress, one step at a time.",
-    description:
-      "Put your plans into action, track your progress and adapt when life doesn't go according to plan.",
-    Icon: LightningIcon,
-  },
-];
+import { USER_JOURNEY } from "@/data/user-journey";
+import type { UserJourneyStep } from "@/data/user-journey";
 
 function JourneyElement({
   title,
   description,
   Icon,
   index,
-}: UserJourneyData & { index: number }) {
+}: UserJourneyStep & { index: number }) {
   return (
     <article
       className={`relative flex gap-5 sm:block sm:text-center ${
@@ -90,7 +59,7 @@ function MobileConnector({ direction }: { direction: "right" | "left" }) {
   );
 }
 
-export function UserJourney() {
+export const UserJourney = () => {
   return (
     <div className="relative">
       <svg
@@ -115,10 +84,10 @@ export function UserJourney() {
       </svg>
 
       <div className="relative grid gap-7 sm:gap-10 grid-cols-1 sm:grid-cols-3">
-        {userJourney.map((step, index) => (
+        {USER_JOURNEY.map((step, index) => (
           <div key={step.title}>
             <JourneyElement {...step} index={index} />
-            {index < userJourney.length - 1 && (
+            {index < USER_JOURNEY.length - 1 && (
               <MobileConnector direction={index === 0 ? "right" : "left"} />
             )}
           </div>
